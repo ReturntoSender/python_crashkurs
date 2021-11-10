@@ -10,4 +10,6 @@ urlpatterns = [
     path('', views.index, name='index'),
     # Seite, die alle Fachgebiete anzeigt.
     path('topics/', views.topics, name='topics'),
+    # Seite für ein einzelnes Fachgebiet.
+    path('topics/<int:topic_id>/', views.topic, name='topic'),
 ]
