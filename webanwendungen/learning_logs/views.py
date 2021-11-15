@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Topic
+from .models import Topic, Entry
 from .forms import TopicForm, EntryForm
 
 
@@ -63,3 +63,23 @@ def new_entry(request, topic_id):
     title = 'Neuer Eintrag'
     context = {'topic': topic, 'form': form, 'title': title}
     return render(request, 'learning_logs/new_entry.html', context)
+
+
+def edit_entry(request, entry_id):
+    """Edit an existing entry"""
+    entry = Entry.objects.get(id=entry_id)
+    topic = entry.topic
+
+    if request.method != 'POST':
+        # Ursprüngliche Anforderung; das mit dem jetzigen Eintrag vorab
+        # ausgefüllte Formular wird angezeigt.
+        form = EntryForm(instance=entry)
+    else:
+        # POST-Daten übermittelt; Daten werden verarbeitet.
+        form = EntryForm(instance=entry, data=request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('learning_logs:topic', topic_id=topic.id)
+    title = 'Bearbeite Eintrag'
+    context = {'entry': entry, 'title': title, 'topic': topic, 'form': form}
+    return render(request, 'learning_logs/edit_entry.html', context)
